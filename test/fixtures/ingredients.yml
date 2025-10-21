@@ -5,11 +5,11 @@ one:
   name: MyString
   quantity: MyString
   unit: MyString
-  note: MyString
+  notes: MyString
 
 two:
   recipe_part: two
   name: MyString
   quantity: MyString
   unit: MyString
-  note: MyString
+  notes: MyString
