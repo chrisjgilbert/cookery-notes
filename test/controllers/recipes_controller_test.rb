@@ -12,4 +12,10 @@ class RecipesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
   end
+
+  test "show show new recipe form" do
+    get new_recipe_path
+
+    assert_response :success
+  end
 end

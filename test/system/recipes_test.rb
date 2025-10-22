@@ -17,4 +17,12 @@ class RecipesTest < ApplicationSystemTestCase
 
     assert_selector "h1", text: recipes(:roast_chicken_and_gravy).title
   end
+
+  test "creating a new recipe" do
+    visit recipes_path
+
+    click_on "Add recipe"
+
+    assert_selector "h1", text: "Add a new recipe"
+  end
 end
