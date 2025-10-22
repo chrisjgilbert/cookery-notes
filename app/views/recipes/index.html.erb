@@ -1,4 +1,12 @@
 <div>
   <h1 class="font-bold text-4xl">Cookery Notes</h1>
   <p>Your personal recipe collection</p>
+  <ul>
+    <% @recipes.each do |recipe| %>
+      <li>
+        <h2><%= recipe.title %></h2>
+        <p><%= recipe.description %></p>
+      </li>
+    <% end %>
+  </ul>
 </div>

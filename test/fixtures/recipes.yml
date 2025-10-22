@@ -1,21 +1,21 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  title: MyString
-  servings: MyString
+  title: Spaghetti Carbonara
+  servings: 2
   prep_time_mins: 1
   cook_time_mins: 1
-  description: MyString
-  source_url: MyString
-  source_name: MyString
-  notes: MyText
+  description: A classic Italian dish made with spaghetti, eggs, cheese, and bacon.
+  source_url: https://www.allrecipes.com/recipe/23600/worlds-best-spaghetti-carbonara/
+  source_name: All Recipes
+  notes: A classic Italian dish made with spaghetti, eggs, cheese, and bacon.
 
 two:
-  title: MyString
-  servings: MyString
+  title: Roast Chicken
+  servings: 2
   prep_time_mins: 1
   cook_time_mins: 1
-  description: MyString
-  source_url: MyString
-  source_name: MyString
-  notes: MyText
+  description: A classic dish made with a whole chicken roasted in the oven.
+  source_url: https://www.bbcgoodfood.com/recipes/roast-chicken
+  source_name: BBC Good Food
+  notes: A classic dish made with a whole chicken roasted in the oven with herbs and lemon.
