@@ -1,3 +1,3 @@
 class Ingredient < ApplicationRecord
-  belongs_to :recipe_part
+  belongs_to :ingredient_group
 end

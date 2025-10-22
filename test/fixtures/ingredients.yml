@@ -1,15 +1,69 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  recipe_part: one
-  name: MyString
-  quantity: MyString
-  unit: MyString
-  notes: MyString
+linguine:
+  ingredient_group: crab_linguine_main
+  text: "450g dried linguine or spaghetti"
 
-two:
-  recipe_part: two
-  name: MyString
-  quantity: MyString
-  unit: MyString
-  notes: MyString
+tomatoes:
+  ingredient_group: crab_linguine_main
+  text: "3 vine-ripened tomatoes, skinned, seeded and chopped"
+
+crab_meat:
+  ingredient_group: crab_linguine_main
+  text: "300g fresh white crab meat"
+
+parsley:
+  ingredient_group: crab_linguine_main
+  text: "1 tablespoon chopped parsley"
+
+lemon_juice:
+  ingredient_group: crab_linguine_main
+  text: "1½ tablespoons lemon juice"
+
+olive_oil:
+  ingredient_group: crab_linguine_main
+  text: "50ml extra virgin olive oil"
+
+chicken:
+  ingredient_group: roast_chicken_main
+  text: "1 whole chicken (1.5-2kg)"
+
+chicken_oil:
+  ingredient_group: roast_chicken_main
+  text: "2 tbsp olive oil"
+
+lemon:
+  ingredient_group: roast_chicken_main
+  text: "1 lemon, halved"
+
+thyme:
+  ingredient_group: roast_chicken_main
+  text: "2 sprigs fresh thyme"
+
+rosemary:
+  ingredient_group: roast_chicken_main
+  text: "2 sprigs fresh rosemary"
+
+seasoning:
+  ingredient_group: roast_chicken_main
+  text: "Salt and black pepper"
+
+pan_juices:
+  ingredient_group: roast_chicken_gravy
+  text: "Pan juices from roast chicken"
+
+flour:
+  ingredient_group: roast_chicken_gravy
+  text: "2 tbsp plain flour"
+
+stock:
+  ingredient_group: roast_chicken_gravy
+  text: "500ml chicken stock"
+
+butter:
+  ingredient_group: roast_chicken_gravy
+  text: "1 tbsp butter"
+
+gravy_seasoning:
+  ingredient_group: roast_chicken_gravy
+  text: "Salt and pepper to taste"

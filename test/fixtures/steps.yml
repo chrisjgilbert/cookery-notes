@@ -1,0 +1,49 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+crab_linguine_step_1:
+  recipe: crab_linguine
+  description: "Cook the linguine in a large pot of boiling water until al dente."
+
+crab_linguine_step_2:
+  recipe: crab_linguine
+  description: "Drain the linguine and set aside."
+
+crab_linguine_step_3:
+  recipe: crab_linguine
+  description: "Add the tomatoes, crab meat, parsley, lemon juice, olive oil, chilli flakes, garlic and salt and pepper to a large bowl and mix well."
+
+roast_chicken_step_1:
+  recipe: roast_chicken_and_gravy
+  description: "Preheat the oven to 180°C."
+
+roast_chicken_step_2:
+  recipe: roast_chicken_and_gravy
+  description: "Season the chicken with salt and pepper."
+
+roast_chicken_step_3:
+  recipe: roast_chicken_and_gravy
+  description: "Heat the oil in a large ovenproof pan and add the chicken, skin-side down."
+
+roast_chicken_step_4:
+  recipe: roast_chicken_and_gravy
+  description: "Roast the chicken for 1 hour, or until cooked through."
+
+roast_chicken_step_5:
+  recipe: roast_chicken_and_gravy
+  description: "Remove the chicken from the oven and let it rest for 10 minutes."
+
+roast_chicken_step_6:
+  recipe: roast_chicken_and_gravy
+  description: "While the chicken is resting, make the gravy."
+
+roast_chicken_step_7:
+  recipe: roast_chicken_and_gravy
+  description: "Add the flour to the pan and cook for 1 minute."
+
+roast_chicken_step_8:
+  recipe: roast_chicken_and_gravy
+  description: "Add the stock and bring to a simmer."
+
+roast_chicken_step_9:
+  recipe: roast_chicken_and_gravy
+  description: "Add the butter and stir until smooth."

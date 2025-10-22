@@ -1,21 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  title: MyString
-  servings: MyString
-  prep_time_mins: 1
-  cook_time_mins: 1
-  description: MyString
-  source_url: MyString
-  source_name: MyString
-  notes: MyText
+crab_linguine:
+  title: The Ultimate Crab Linguine
+  servings: "4"
+  prep_time_mins: 5
+  cook_time_mins: 10
+  source: Rick Stein
+  notes: Serve with a side of salad and a glass of white wine.
 
-two:
-  title: MyString
-  servings: MyString
-  prep_time_mins: 1
-  cook_time_mins: 1
-  description: MyString
-  source_url: MyString
-  source_name: MyString
-  notes: MyText
+roast_chicken_and_gravy:
+  title: Roast Chicken and Gravy
+  servings: "4-6"
+  prep_time_mins: 20
+  cook_time_mins: 90
+  source: BBC Good Food
+  notes: Serve with a side of mashed potatoes.

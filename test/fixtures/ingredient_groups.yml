@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+crab_linguine_main:
+  recipe: crab_linguine
+  name: "Main"
+
+roast_chicken_main:
+  recipe: roast_chicken_and_gravy
+  name: "Main"
+
+roast_chicken_gravy:
+  recipe: roast_chicken_and_gravy
+  name: "For the gravy"
