@@ -1,8 +1,0 @@
-<div class="ingredient flex items-center space-x-2" id="ingredient-<%= ingredient_index %>">
-  <%= text_field_tag "recipe[ingredient_groups_attributes][0][ingredients_attributes][#{ingredient_index}][text]", "", 
-      placeholder: "Enter ingredient", 
-      class: "flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
-  <%= button_to "×", "#", 
-      class: "text-red-500 hover:text-red-700 font-bold text-lg px-2 py-1",
-      onclick: "this.closest('.ingredient').remove(); return false;" %>
-</div>
