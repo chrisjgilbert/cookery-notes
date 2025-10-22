@@ -30,34 +30,6 @@ class RecipesController < ApplicationController
   def show
   end
 
-  def edit
-    # Ensure there's a main ingredient group if none exist
-    if @recipe.ingredient_groups.empty?
-      ingredient_group = @recipe.ingredient_groups.build(name: "main")
-      3.times { ingredient_group.ingredients.build }
-    else
-      # Build a few extra ingredient fields for existing groups
-      @recipe.ingredient_groups.each do |group|
-        2.times { group.ingredients.build }
-      end
-    end
-
-    # Build a few extra steps if needed
-    if @recipe.steps.empty?
-      3.times { @recipe.steps.build }
-    else
-      2.times { @recipe.steps.build }
-    end
-  end
-
-  def update
-    if @recipe.update(recipe_params)
-      redirect_to @recipe
-    else
-      render :edit
-    end
-  end
-
   private
 
   def set_recipe
