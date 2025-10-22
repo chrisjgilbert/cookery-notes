@@ -8,6 +8,8 @@ export default class extends Controller {
     "step",
     "ingredientTemplate",
     "stepTemplate",
+    "ingredientGroup",
+    "stepNumber",
   ];
   static values = {
     ingredientCount: Number,
@@ -21,42 +23,48 @@ export default class extends Controller {
 
   countExistingIngredients() {
     return this.ingredientTargets.filter(
-      (ingredient) => !ingredient.closest(".ingredient-template")
+      (ingredient) =>
+        !ingredient.closest("[data-form-fields-target='ingredientTemplate']")
     ).length;
   }
 
   countExistingSteps() {
-    return this.stepTargets.filter((step) => !step.closest(".step-template"))
-      .length;
+    return this.stepTargets.filter(
+      (step) => !step.closest("[data-form-fields-target='stepTemplate']")
+    ).length;
   }
 
   addIngredient() {
-    const template = document.querySelector(".ingredient-template");
+    const template = this.ingredientTemplateTarget;
     const newIngredient = template.cloneNode(true);
-    newIngredient.classList.remove("ingredient-template", "hidden");
+    newIngredient.classList.remove("hidden");
 
     // Update the input name with the correct index
     const input = newIngredient.querySelector("input");
     input.name = input.name.replace("INDEX", this.ingredientCountValue);
 
-    // Find the ingredient group container
-    const groupContainer = this.ingredientsContainerTarget.querySelector(
-      "[data-ingredient-group]"
-    );
-    groupContainer.appendChild(newIngredient);
+    // Add to the ingredient group container
+    this.ingredientGroupTarget.appendChild(newIngredient);
 
     this.ingredientCountValue++;
   }
 
   addStep() {
-    const template = document.querySelector(".step-template");
+    const template = this.stepTemplateTarget;
     const newStep = template.cloneNode(true);
-    newStep.classList.remove("step-template", "hidden");
+    newStep.classList.remove("hidden");
 
     // Update the textarea name with the correct index
     const textarea = newStep.querySelector("textarea");
-    console.log(this.stepCountValue);
     textarea.name = textarea.name.replace("INDEX", this.stepCountValue);
+
+    // Update the step number to the correct value
+    const stepNumber = newStep.querySelector(
+      "[data-form-fields-target='stepNumber']"
+    );
+    if (stepNumber) {
+      stepNumber.textContent = this.stepCountValue + 1;
+    }
 
     this.stepsContainerTarget.appendChild(newStep);
     this.stepCountValue++;
@@ -80,12 +88,14 @@ export default class extends Controller {
 
   updateStepNumbers() {
     const actualSteps = this.stepTargets.filter(
-      (step) => !step.closest(".step-template")
+      (step) => !step.closest("[data-form-fields-target='stepTemplate']")
     );
     actualSteps.forEach((step, index) => {
-      const numberSpan = step.querySelector(".step-number");
-      if (numberSpan) {
-        numberSpan.textContent = index + 1;
+      const stepNumber = step.querySelector(
+        "[data-form-fields-target='stepNumber']"
+      );
+      if (stepNumber) {
+        stepNumber.textContent = index + 1;
       }
     });
   }
