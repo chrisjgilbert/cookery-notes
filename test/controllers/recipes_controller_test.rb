@@ -6,4 +6,10 @@ class RecipesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
   end
+
+  test "should show recipe" do
+    get recipe_path(recipes(:roast_chicken_and_gravy))
+
+    assert_response :success
+  end
 end

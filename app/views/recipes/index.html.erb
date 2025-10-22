@@ -4,7 +4,7 @@
   <ul>
     <% @recipes.each do |recipe| %>
       <li>
-        <h2><%= recipe.title %></h2>
+        <h2><%= link_to recipe.title, recipe_path(recipe) %></h2>
       </li>
     <% end %>
   </ul>
