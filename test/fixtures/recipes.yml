@@ -1,21 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  title: Spaghetti Carbonara
-  servings: 2
-  prep_time_mins: 1
-  cook_time_mins: 1
-  description: A classic Italian dish made with spaghetti, eggs, cheese, and bacon.
-  source_url: https://www.allrecipes.com/recipe/23600/worlds-best-spaghetti-carbonara/
-  source_name: All Recipes
-  notes: A classic Italian dish made with spaghetti, eggs, cheese, and bacon.
+crab_linguine:
+  title: The Ultimate Crab Linguine
+  servings: "4"
+  prep_time_mins: 5
+  cook_time_mins: 10
+  source: Rick Stein
+  notes: Serve with a side of salad and a glass of white wine.
 
-two:
-  title: Roast Chicken
-  servings: 2
-  prep_time_mins: 1
-  cook_time_mins: 1
-  description: A classic dish made with a whole chicken roasted in the oven.
-  source_url: https://www.bbcgoodfood.com/recipes/roast-chicken
-  source_name: BBC Good Food
-  notes: A classic dish made with a whole chicken roasted in the oven with herbs and lemon.
+roast_chicken_and_gravy:
+  title: Roast Chicken and Gravy
+  servings: "4-6"
+  prep_time_mins: 20
+  cook_time_mins: 90
+  source: BBC Good Food
+  notes: Serve with a side of mashed potatoes.
