@@ -10,35 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_21_120541) do
-  create_table "ingredients", force: :cascade do |t|
-    t.integer "recipe_part_id", null: false
-    t.string "name", null: false
-    t.string "quantity"
-    t.string "unit"
-    t.string "notes"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["recipe_part_id"], name: "index_ingredients_on_recipe_part_id"
-  end
-
-  create_table "instructions", force: :cascade do |t|
-    t.integer "recipe_part_id", null: false
-    t.text "text", null: false
-    t.integer "order", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["recipe_part_id"], name: "index_instructions_on_recipe_part_id"
-  end
-
-  create_table "recipe_parts", force: :cascade do |t|
+ActiveRecord::Schema[8.0].define(version: 2025_10_22_102342) do
+  create_table "ingredient_groups", force: :cascade do |t|
     t.integer "recipe_id", null: false
-    t.string "title", null: false
-    t.integer "prep_time_mins"
-    t.integer "cook_time_mins"
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["recipe_id"], name: "index_recipe_parts_on_recipe_id"
+    t.index ["recipe_id"], name: "index_ingredient_groups_on_recipe_id"
+  end
+
+  create_table "ingredients", force: :cascade do |t|
+    t.integer "ingredient_group_id", null: false
+    t.string "text", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ingredient_group_id"], name: "index_ingredients_on_ingredient_group_id"
   end
 
   create_table "recipes", force: :cascade do |t|
@@ -46,15 +32,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_21_120541) do
     t.string "servings"
     t.integer "prep_time_mins"
     t.integer "cook_time_mins"
-    t.string "description"
-    t.string "source_url"
-    t.string "source_name"
+    t.string "source"
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "ingredients", "recipe_parts"
-  add_foreign_key "instructions", "recipe_parts"
-  add_foreign_key "recipe_parts", "recipes"
+  create_table "steps", force: :cascade do |t|
+    t.integer "recipe_id", null: false
+    t.string "description", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recipe_id"], name: "index_steps_on_recipe_id"
+  end
+
+  add_foreign_key "ingredient_groups", "recipes"
+  add_foreign_key "ingredients", "ingredient_groups"
+  add_foreign_key "steps", "recipes"
 end

@@ -5,9 +5,7 @@ class CreateRecipes < ActiveRecord::Migration[8.0]
       t.string :servings
       t.integer :prep_time_mins
       t.integer :cook_time_mins
-      t.string :description
-      t.string :source_url
-      t.string :source_name
+      t.string :source
       t.text :notes
 
       t.timestamps
