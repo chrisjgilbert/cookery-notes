@@ -15,6 +15,13 @@ out/
 .pnpm-store/
 *.tsbuildinfo
 
+# Test artifacts
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/.playwright/
+frontend/coverage/
+
 # Env
 .env
 .env.local
