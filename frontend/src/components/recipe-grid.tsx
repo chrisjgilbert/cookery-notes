@@ -5,7 +5,7 @@ import { RecipeCard } from "./recipe-card";
 export function RecipeGrid({ items }: { items: RecipeSummary[] }) {
   if (items.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-neutral-300 p-12 text-center text-neutral-500">
+      <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
         No recipes yet. Import one from a URL to get started.
       </div>
     );

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { NavBar } from "@/components/nav-bar";
 import { RecipeFilters } from "@/components/recipe-filters";
 import { RecipeGrid } from "@/components/recipe-grid";
+import { Button } from "@/components/ui/button";
 import { useRecipes } from "@/lib/queries";
 import type { SortKey, SortOrder } from "@/lib/types";
 
@@ -34,27 +35,29 @@ export default function HomePage() {
       <NavBar />
       <main className="mx-auto max-w-6xl px-4 pb-12 pt-4">
         <RecipeFilters value={filters} onChange={setFilters} />
-        {isLoading && <div className="py-12 text-center text-neutral-500">Loading…</div>}
+        {isLoading && (
+          <div className="py-12 text-center text-muted-foreground">Loading…</div>
+        )}
         {isError && (
-          <div className="py-12 text-center text-red-600">
+          <div className="py-12 text-center text-destructive">
             Failed to load recipes.
           </div>
         )}
         {!isLoading && !isError && (
           <>
-            <div className="mb-3 text-sm text-neutral-500">
+            <div className="mb-3 text-sm text-muted-foreground">
               {total} {total === 1 ? "recipe" : "recipes"}
             </div>
             <RecipeGrid items={items} />
             {hasNextPage && (
               <div className="mt-6 flex justify-center">
-                <button
+                <Button
+                  variant="outline"
                   onClick={() => fetchNextPage()}
                   disabled={isFetchingNextPage}
-                  className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm hover:bg-neutral-50 disabled:opacity-50"
                 >
                   {isFetchingNextPage ? "Loading…" : "Load more"}
-                </button>
+                </Button>
               </div>
             )}
           </>

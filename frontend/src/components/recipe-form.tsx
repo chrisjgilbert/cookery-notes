@@ -3,6 +3,10 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import type { RecipeInput } from "@/lib/types";
 
 interface Props {
@@ -53,113 +57,113 @@ export function RecipeForm({ defaultValues, submitLabel, onSubmit, submitting }:
   return (
     <form onSubmit={submit} className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Title" required>
-          <input
-            {...register("title", { required: true })}
-            className="form-input"
-          />
+        <Field label="Title" htmlFor="title" required>
+          <Input id="title" {...register("title", { required: true })} />
         </Field>
-        <Field label="Source URL">
-          <input {...register("source_url")} className="form-input" />
+        <Field label="Source URL" htmlFor="source_url">
+          <Input id="source_url" {...register("source_url")} />
         </Field>
-        <Field label="Image URL">
-          <input {...register("image_url")} className="form-input" />
+        <Field label="Image URL" htmlFor="image_url">
+          <Input id="image_url" {...register("image_url")} />
         </Field>
-        <Field label="Servings">
-          <input
+        <Field label="Servings" htmlFor="servings">
+          <Input
+            id="servings"
             type="number"
             {...register("servings", { valueAsNumber: true })}
-            className="form-input"
           />
         </Field>
-        <Field label="Prep time (min)">
-          <input
+        <Field label="Prep time (min)" htmlFor="prep_time_minutes">
+          <Input
+            id="prep_time_minutes"
             type="number"
             {...register("prep_time_minutes", { valueAsNumber: true })}
-            className="form-input"
           />
         </Field>
-        <Field label="Cook time (min)">
-          <input
+        <Field label="Cook time (min)" htmlFor="cook_time_minutes">
+          <Input
+            id="cook_time_minutes"
             type="number"
             {...register("cook_time_minutes", { valueAsNumber: true })}
-            className="form-input"
           />
         </Field>
-        <Field label="Total time (min)">
-          <input
+        <Field label="Total time (min)" htmlFor="total_time_minutes">
+          <Input
+            id="total_time_minutes"
             type="number"
             {...register("total_time_minutes", { valueAsNumber: true })}
-            className="form-input"
           />
         </Field>
-        <Field label="Cuisine">
-          <input {...register("cuisine")} className="form-input" />
+        <Field label="Cuisine" htmlFor="cuisine">
+          <Input id="cuisine" {...register("cuisine")} />
         </Field>
-        <Field label="Course">
-          <input {...register("course")} className="form-input" />
+        <Field label="Course" htmlFor="course">
+          <Input id="course" {...register("course")} />
         </Field>
-        <Field label="Difficulty">
-          <input {...register("difficulty")} className="form-input" />
+        <Field label="Difficulty" htmlFor="difficulty">
+          <Input id="difficulty" {...register("difficulty")} />
         </Field>
       </div>
 
-      <Field label="Description">
-        <textarea rows={2} {...register("description")} className="form-input" />
+      <Field label="Description" htmlFor="description">
+        <Textarea id="description" rows={2} {...register("description")} />
       </Field>
 
-      <Field label="Tags (comma separated)">
-        <input
+      <Field label="Tags (comma separated)" htmlFor="tags">
+        <Input
+          id="tags"
           defaultValue={(defaultValues?.tags ?? []).join(", ")}
           {...register("tags" as never)}
-          className="form-input"
         />
       </Field>
 
       <section>
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-semibold">Ingredients</h3>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() =>
               ingredients.append({ quantity: null, unit: null, name: "", notes: null })
             }
-            className="inline-flex items-center gap-1 text-sm text-brand-600 hover:underline"
           >
             <Plus className="h-4 w-4" /> Add
-          </button>
+          </Button>
         </div>
         <div className="space-y-2">
           {ingredients.fields.map((field, i) => (
             <div key={field.id} className="grid grid-cols-12 gap-2">
-              <input
+              <Input
                 placeholder="Qty"
                 {...register(`ingredients.${i}.quantity` as const)}
-                className="form-input col-span-2"
+                className="col-span-2"
               />
-              <input
+              <Input
                 placeholder="Unit"
                 {...register(`ingredients.${i}.unit` as const)}
-                className="form-input col-span-2"
+                className="col-span-2"
               />
-              <input
+              <Input
                 placeholder="Name"
                 {...register(`ingredients.${i}.name` as const, { required: true })}
-                className="form-input col-span-4"
+                className="col-span-4"
               />
-              <input
+              <Input
                 placeholder="Notes"
                 {...register(`ingredients.${i}.notes` as const)}
-                className="form-input col-span-3"
+                className="col-span-3"
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => ingredients.remove(i)}
-                className="col-span-1 flex items-center justify-center rounded-md border border-neutral-300 text-neutral-500 hover:bg-neutral-50"
                 aria-label="Remove ingredient"
+                className="col-span-1"
               >
                 <Trash2 className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -168,84 +172,79 @@ export function RecipeForm({ defaultValues, submitLabel, onSubmit, submitting }:
       <section>
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-semibold">Instructions</h3>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() =>
               instructions.append({ step: instructions.fields.length + 1, text: "" })
             }
-            className="inline-flex items-center gap-1 text-sm text-brand-600 hover:underline"
           >
             <Plus className="h-4 w-4" /> Add
-          </button>
+          </Button>
         </div>
         <div className="space-y-2">
           {instructions.fields.map((field, i) => (
             <div key={field.id} className="grid grid-cols-12 gap-2">
-              <input
+              <Input
                 type="number"
                 {...register(`instructions.${i}.step` as const, {
                   valueAsNumber: true,
                   required: true,
                 })}
-                className="form-input col-span-1"
+                className="col-span-1"
               />
-              <textarea
+              <Textarea
                 rows={2}
                 {...register(`instructions.${i}.text` as const, { required: true })}
-                className="form-input col-span-10"
+                className="col-span-10"
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => instructions.remove(i)}
-                className="col-span-1 flex items-center justify-center rounded-md border border-neutral-300 text-neutral-500 hover:bg-neutral-50"
                 aria-label="Remove step"
+                className="col-span-1"
               >
                 <Trash2 className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>
       </section>
 
-      <Field label="Notes">
-        <textarea rows={3} {...register("notes")} className="form-input" />
+      <Field label="Notes" htmlFor="notes">
+        <Textarea id="notes" rows={3} {...register("notes")} />
       </Field>
 
       <div>
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={submitting}>
           {submitting ? "Saving…" : submitLabel}
-        </button>
+        </Button>
       </div>
-
-      <style jsx global>{`
-        .form-input {
-          @apply w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500;
-        }
-      `}</style>
     </form>
   );
 }
 
 function Field({
   label,
+  htmlFor,
   required,
   children,
 }: {
   label: string;
+  htmlFor?: string;
   required?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="mb-1 block text-sm font-medium">
+    <div className="space-y-2">
+      <Label htmlFor={htmlFor}>
         {label}
-        {required && <span className="text-brand-600"> *</span>}
-      </span>
+        {required && <span className="text-primary"> *</span>}
+      </Label>
       {children}
-    </label>
+    </div>
   );
 }
