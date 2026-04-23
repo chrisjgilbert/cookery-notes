@@ -134,6 +134,6 @@ class RecipeExtractor
   end
 
   def client
-    @client ||= Anthropic::Client.new(access_token: ENV.fetch("ANTHROPIC_API_KEY"))
+    @client ||= Anthropic::Client.new(access_token: Rails.application.credentials.anthropic_api_key!)
   end
 end

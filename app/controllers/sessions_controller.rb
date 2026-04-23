@@ -22,8 +22,7 @@ class SessionsController < ApplicationController
   private
 
   def password_matches?(submitted)
-    hash = ENV["APP_PASSWORD_HASH"]
-    return submitted == ENV["APP_PASSWORD"] if hash.blank?
+    hash = Rails.application.credentials.app_password_hash!
     BCrypt::Password.new(hash).is_password?(submitted)
   rescue BCrypt::Errors::InvalidHash
     false
