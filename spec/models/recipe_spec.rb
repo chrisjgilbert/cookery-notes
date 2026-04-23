@@ -1,0 +1,50 @@
+require "rails_helper"
+
+RSpec.describe Recipe, type: :model do
+  let(:valid_attrs) do
+    {
+      title: "Tomato Pasta",
+      ingredients: [{ "name" => "pasta" }, { "name" => "tomato" }],
+      instructions: [{ "step" => 1, "text" => "Boil" }],
+      tags: ["italian"],
+    }
+  end
+
+  it "is valid with minimum attributes" do
+    expect(Recipe.new(valid_attrs)).to be_valid
+  end
+
+  it "requires a title" do
+    expect(Recipe.new(valid_attrs.merge(title: nil))).not_to be_valid
+  end
+
+  it "populates search_tsv via trigger including ingredient names" do
+    recipe = Recipe.create!(valid_attrs)
+    recipe.reload
+    rows = Recipe.where("search_tsv @@ websearch_to_tsquery('english', 'tomato')")
+    expect(rows).to include(recipe)
+  end
+
+  describe "scopes" do
+    before do
+      @pasta = Recipe.create!(valid_attrs)
+      @curry = Recipe.create!(valid_attrs.merge(title: "Curry", cuisine: "Indian",
+        ingredients: [{ "name" => "chicken" }]))
+    end
+
+    it ".with_cuisine filters by cuisine" do
+      expect(Recipe.with_cuisine("Indian")).to contain_exactly(@curry)
+    end
+
+    it ".search matches title" do
+      expect(Recipe.search("Curry")).to contain_exactly(@curry)
+    end
+
+    it ".sorted rejects unknown columns and orders" do
+      ordered = Recipe.sorted("title", "asc")
+      expect(ordered.first.title).to eq("Curry")
+      ordered_default = Recipe.sorted("drop_table", "---")
+      expect(ordered_default.to_sql).to include("created_at DESC")
+    end
+  end
+end
