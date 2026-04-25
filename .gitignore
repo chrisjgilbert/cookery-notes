@@ -41,3 +41,11 @@ node_modules
 /.playwright
 /coverage
 tsconfig.tsbuildinfo
+
+# Kamal local secrets — committed file is a template only.
+/.kamal/secrets.local
+/.kamal/secrets.*.local
+
+
+# Ignore key files for decrypting credentials and more.
+/config/credentials/*.key

@@ -1,0 +1,74 @@
+# Kamal 2 deploy config for a single Hetzner VPS running the Rails app
+# and Postgres side-by-side. Fill in the placeholders marked <...> before
+# the first deploy. Managed via `bin/kamal` (see docs/deploy-hetzner.md).
+
+service: cookery-notes
+
+# The image pushed to your registry on each deploy.
+image: <dockerhub-user>/cookery-notes
+
+servers:
+  web:
+    hosts:
+      - <hetzner-vps-ip>
+    labels:
+      traefik.http.routers.cookery.rule: Host(`cooking.gilbert.works`)
+
+# Kamal Proxy terminates TLS and forwards to the app container.
+proxy:
+  ssl: true
+  host: cooking.gilbert.works
+  app_port: 80
+  healthcheck:
+    path: /up
+    interval: 5
+    timeout: 10
+
+registry:
+  # Docker Hub by default; swap for ghcr.io/<user> or Hetzner's registry if preferred.
+  username: <dockerhub-user>
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64     # Hetzner CX VMs are x86_64
+  cache:
+    type: gha     # remove if not using GitHub Actions builds
+
+env:
+  clear:
+    RAILS_LOG_TO_STDOUT: "true"
+    RAILS_SERVE_STATIC_FILES: "true"
+    JINA_READER_BASE: "https://r.jina.ai"
+    # Point Rails at the Postgres accessory running on the same host.
+    DATABASE_URL: "postgres://cookery:$POSTGRES_PASSWORD@cookery-notes-db:5432/cookery_notes_production"
+  secret:
+    # RAILS_MASTER_KEY decrypts config/credentials.yml.enc which holds
+    # APP_PASSWORD_HASH and ANTHROPIC_API_KEY. POSTGRES_PASSWORD stays
+    # outside credentials so the db accessory can read it directly.
+    - RAILS_MASTER_KEY
+    - POSTGRES_PASSWORD
+
+# Postgres runs alongside the web container. The named volume makes the data
+# survive deploys and app container rebuilds. Bind to 127.0.0.1 only — the
+# app reaches it via the Kamal-managed Docker network, never the public IP.
+accessories:
+  db:
+    image: postgres:16-alpine
+    host: <hetzner-vps-ip>
+    port: "127.0.0.1:5432:5432"
+    env:
+      clear:
+        POSTGRES_USER: cookery
+        POSTGRES_DB: cookery_notes_production
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - /var/lib/cookery/postgres:/var/lib/postgresql/data
+
+# Run Rails commands on a deployed host:
+#   bin/kamal app exec -i "bin/rails console"
+#   bin/kamal accessory exec db "psql -U cookery cookery_notes_production"
+#
+# Run a nightly backup (see bin/backup):
+#   bin/kamal app exec "bin/backup"

@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Restore a Postgres dump created by bin/backup.
+# Usage:
+#   bin/restore                    # lists the 10 most recent dumps
+#   bin/restore <filename>         # restores the named dump
+#   bin/restore latest             # restores the newest daily dump
+#
+# Destructive: drops and recreates the current DATABASE_URL schema.
+# Prompts for confirmation unless RESTORE_CONFIRM=yes is set.
+
+set -euo pipefail
+
+: "${BACKUP_S3_ENDPOINT:?set BACKUP_S3_ENDPOINT}"
+: "${BACKUP_S3_BUCKET:?set BACKUP_S3_BUCKET}"
+: "${BACKUP_S3_ACCESS_KEY:?set BACKUP_S3_ACCESS_KEY}"
+: "${BACKUP_S3_SECRET_KEY:?set BACKUP_S3_SECRET_KEY}"
+: "${DATABASE_URL:?set DATABASE_URL}"
+
+export AWS_ACCESS_KEY_ID="$BACKUP_S3_ACCESS_KEY"
+export AWS_SECRET_ACCESS_KEY="$BACKUP_S3_SECRET_KEY"
+export AWS_EC2_METADATA_DISABLED=true
+
+s3() { aws --endpoint-url "$BACKUP_S3_ENDPOINT" "$@"; }
+
+target="${1-}"
+
+if [ -z "$target" ]; then
+  echo "Most recent daily backups:"
+  s3 s3 ls "s3://${BACKUP_S3_BUCKET}/daily/" | awk '{print $4}' | sort -r | head -10
+  echo
+  echo "Restore with: bin/restore <filename>"
+  exit 0
+fi
+
+if [ "$target" = "latest" ]; then
+  target="$(s3 s3 ls "s3://${BACKUP_S3_BUCKET}/daily/" | awk '{print $4}' | sort -r | head -1)"
+  [ -n "$target" ] || { echo "No backups found"; exit 1; }
+fi
+
+s3url="s3://${BACKUP_S3_BUCKET}/daily/${target}"
+tmpfile="/tmp/${target}"
+
+echo "About to restore ${target} into ${DATABASE_URL%%\?*}"
+if [ "${RESTORE_CONFIRM:-}" != "yes" ]; then
+  read -rp "This will DROP the existing schema. Type 'yes' to continue: " answer
+  [ "$answer" = "yes" ] || { echo "aborted"; exit 1; }
+fi
+
+echo "[restore] fetch → ${tmpfile}"
+s3 s3 cp "$s3url" "$tmpfile"
+
+echo "[restore] drop/recreate public schema"
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;"
+
+echo "[restore] pg_restore"
+gunzip -c "$tmpfile" | pg_restore --no-owner --no-acl --dbname "$DATABASE_URL"
+
+rm -f "$tmpfile"
+echo "[restore] done"

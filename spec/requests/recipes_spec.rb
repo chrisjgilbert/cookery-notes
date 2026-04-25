@@ -1,9 +1,18 @@
 require "rails_helper"
+<<<<<<< HEAD
 
 RSpec.describe "Recipes", type: :request do
   before do
     ENV["APP_PASSWORD_HASH"] = nil
     ENV["APP_PASSWORD"] = "letmein"
+=======
+require "bcrypt"
+
+RSpec.describe "Recipes", type: :request do
+  before do
+    hash = BCrypt::Password.create("letmein").to_s
+    allow(Rails.application.credentials).to receive(:app_password_hash!).and_return(hash)
+>>>>>>> claude/rails-inertia-rewrite
     post "/login", params: { password: "letmein" }
   end
 
