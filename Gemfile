@@ -28,10 +28,11 @@ group :development, :test do
   gem "rspec-rails", "~> 7.1"
 end
 
-group :test do
-  gem "webmock", require: false
+group :development do
+  gem "kamal", require: false
+  gem "web-console"
 end
 
-group :development do
-  gem "web-console"
+group :test do
+  gem "webmock", require: false
 end

@@ -39,3 +39,6 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+
+# Ignore Kamal files (deploy.yml, secrets, hooks - not needed inside the container)
+/.kamal
