@@ -29,21 +29,31 @@ backups to S3-compatible object storage. Right-sized for a single-user app.
    and use `bundle exec kamal`).
 2. Install Docker locally — Kamal builds images on your machine and pushes
    to a registry.
-3. Generate a Rails master key if you don't already have one:
-   `bin/rails credentials:edit`.
-4. Generate `APP_PASSWORD_HASH`:
+3. Edit Rails credentials and add the two app secrets:
 
    ```sh
-   ruby -r bcrypt -e 'puts BCrypt::Password.create("your-password").to_s'
+   bin/rails credentials:edit
    ```
 
-5. Fill in placeholders in `config/deploy.yml`:
+   Add (the hash comes from `ruby -r bcrypt -e 'puts BCrypt::Password.create("your-password").to_s'`):
+
+   ```yaml
+   app_password_hash: "$2a$12$....."
+   anthropic_api_key: "sk-ant-..."
+   ```
+
+   Save. The encrypted file is committed; the master key in `config/master.key`
+   stays local. The app reads both values via `Rails.application.credentials`.
+
+4. Fill in placeholders in `config/deploy.yml`:
    - `<dockerhub-user>` — your Docker Hub username (or swap to `ghcr.io/<user>`)
    - `<hetzner-vps-ip>` — the VPS public IP
    - `<domain>` — the DNS name pointing at the VPS
 
-6. Copy `.kamal/secrets` → `.kamal/secrets.local` and fill it in. Keep the
-   local copy out of git.
+5. Copy `.kamal/secrets` → `.kamal/secrets.local` and fill it in
+   (`KAMAL_REGISTRY_PASSWORD`, `POSTGRES_PASSWORD`). The local copy is
+   gitignored. `RAILS_MASTER_KEY` is read from `config/master.key`
+   automatically.
 
 ## First deploy
 

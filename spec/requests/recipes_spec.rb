@@ -1,9 +1,10 @@
 require "rails_helper"
+require "bcrypt"
 
 RSpec.describe "Recipes", type: :request do
   before do
-    ENV["APP_PASSWORD_HASH"] = nil
-    ENV["APP_PASSWORD"] = "letmein"
+    hash = BCrypt::Password.create("letmein").to_s
+    allow(Rails.application.credentials).to receive(:app_password_hash!).and_return(hash)
     post "/login", params: { password: "letmein" }
   end
 

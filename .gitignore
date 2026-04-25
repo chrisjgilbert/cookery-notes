@@ -46,3 +46,7 @@ tsconfig.tsbuildinfo
 /.kamal/secrets.local
 /.kamal/secrets.*.local
 
+
+# Ignore key files for decrypting credentials and more.
+/config/credentials/*.key
+

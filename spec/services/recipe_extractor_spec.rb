@@ -1,7 +1,9 @@
 require "rails_helper"
 
 RSpec.describe RecipeExtractor do
-  before { ENV["ANTHROPIC_API_KEY"] = "test-key" }
+  before do
+    allow(Rails.application.credentials).to receive(:anthropic_api_key!).and_return("test-key")
+  end
 
   def tool_response(input)
     {

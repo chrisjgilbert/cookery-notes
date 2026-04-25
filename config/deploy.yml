@@ -43,9 +43,10 @@ env:
     # Point Rails at the Postgres accessory running on the same host.
     DATABASE_URL: "postgres://cookery:$POSTGRES_PASSWORD@cookery-notes-db:5432/cookery_notes_production"
   secret:
+    # RAILS_MASTER_KEY decrypts config/credentials.yml.enc which holds
+    # APP_PASSWORD_HASH and ANTHROPIC_API_KEY. POSTGRES_PASSWORD stays
+    # outside credentials so the db accessory can read it directly.
     - RAILS_MASTER_KEY
-    - APP_PASSWORD_HASH
-    - ANTHROPIC_API_KEY
     - POSTGRES_PASSWORD
 
 # Postgres runs alongside the web container. The named volume makes the data
