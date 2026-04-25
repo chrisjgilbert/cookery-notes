@@ -42,3 +42,7 @@ node_modules
 /coverage
 tsconfig.tsbuildinfo
 
+# Kamal local secrets — committed file is a template only.
+/.kamal/secrets.local
+/.kamal/secrets.*.local
+

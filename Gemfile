@@ -34,4 +34,5 @@ end
 
 group :development do
   gem "web-console"
+  gem "kamal", require: false
 end
