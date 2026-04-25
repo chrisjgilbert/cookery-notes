@@ -5,12 +5,12 @@
 service: cookery-notes
 
 # The image pushed to your registry on each deploy.
-image: <dockerhub-user>/cookery-notes
+image: cjgilbert/cookery-notes
 
 servers:
   web:
     hosts:
-      - <hetzner-vps-ip>
+      - 46.224.179.132
     labels:
       traefik.http.routers.cookery.rule: Host(`cooking.gilbert.works`)
 
@@ -26,22 +26,23 @@ proxy:
 
 registry:
   # Docker Hub by default; swap for ghcr.io/<user> or Hetzner's registry if preferred.
-  username: <dockerhub-user>
+  username: cjgilbert
   password:
     - KAMAL_REGISTRY_PASSWORD
 
 builder:
-  arch: amd64     # Hetzner CX VMs are x86_64
-  cache:
-    type: gha     # remove if not using GitHub Actions builds
+  arch: amd64 # Hetzner CX VMs are x86_64
 
 env:
   clear:
+    RAILS_ENV: production
     RAILS_LOG_TO_STDOUT: "true"
     RAILS_SERVE_STATIC_FILES: "true"
     JINA_READER_BASE: "https://r.jina.ai"
     # Point Rails at the Postgres accessory running on the same host.
-    DATABASE_URL: "postgres://cookery:$POSTGRES_PASSWORD@cookery-notes-db:5432/cookery_notes_production"
+    POSTGRES_HOST: cookery-notes-db
+    POSTGRES_USER: cookery
+    POSTGRES_DB: cookery_notes_production
   secret:
     # RAILS_MASTER_KEY decrypts config/credentials.yml.enc which holds
     # APP_PASSWORD_HASH and ANTHROPIC_API_KEY. POSTGRES_PASSWORD stays
@@ -55,7 +56,7 @@ env:
 accessories:
   db:
     image: postgres:16-alpine
-    host: <hetzner-vps-ip>
+    host: 46.224.179.132
     port: "127.0.0.1:5432:5432"
     env:
       clear:
