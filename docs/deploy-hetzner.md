@@ -21,7 +21,19 @@ backups to S3-compatible object storage. Right-sized for a single-user app.
 3. (Recommended) Enable **VPS snapshots** — €0.0119/GB/mo, one-click rollback.
 4. Create a **Hetzner Object Storage** bucket in the same region for backups.
    Note the S3 endpoint, access key, secret key.
-5. Point your DNS A/AAAA records at the VPS IP.
+5. Point DNS at the VPS:
+
+   ```
+   cooking.gilbert.works.   A     <hetzner-vps-ipv4>
+   cooking.gilbert.works.   AAAA  <hetzner-vps-ipv6>
+   ```
+
+   Wherever `gilbert.works` is hosted (Cloudflare, Route53, etc.), add an A
+   record (and AAAA if you have IPv6). If you're behind Cloudflare, set the
+   record to **DNS-only** (grey cloud) for the first deploy — Kamal Proxy
+   provisions Let's Encrypt certs by HTTP-01 challenge, which Cloudflare's
+   proxy interferes with. Once the cert is in place you can re-enable the
+   orange cloud if you want.
 
 ## One-time local setup
 
@@ -45,10 +57,11 @@ backups to S3-compatible object storage. Right-sized for a single-user app.
    Save. The encrypted file is committed; the master key in `config/master.key`
    stays local. The app reads both values via `Rails.application.credentials`.
 
-4. Fill in placeholders in `config/deploy.yml`:
+4. Fill in the remaining placeholders in `config/deploy.yml`:
    - `<dockerhub-user>` — your Docker Hub username (or swap to `ghcr.io/<user>`)
    - `<hetzner-vps-ip>` — the VPS public IP
-   - `<domain>` — the DNS name pointing at the VPS
+
+   The host (`cooking.gilbert.works`) is already set.
 
 5. Copy `.kamal/secrets` → `.kamal/secrets.local` and fill it in
    (`KAMAL_REGISTRY_PASSWORD`, `POSTGRES_PASSWORD`). The local copy is
