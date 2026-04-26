@@ -47,4 +47,44 @@ RSpec.describe Recipe, type: :model do
       expect(ordered_default.to_sql).to include("created_at DESC")
     end
   end
+
+  describe "parts" do
+    it "defaults to an empty array" do
+      recipe = Recipe.create!(valid_attrs)
+      expect(recipe.parts).to eq([])
+    end
+
+    it "is valid with well-formed parts" do
+      recipe = Recipe.new(valid_attrs.merge(parts: [
+        {
+          "name" => "For the rub",
+          "ingredients" => [{ "name" => "paprika" }],
+          "instructions" => [{ "step" => 1, "text" => "Mix" }],
+        },
+      ]))
+      expect(recipe).to be_valid
+    end
+
+    it "is invalid when parts is not an array" do
+      recipe = Recipe.new(valid_attrs.merge(parts: { "name" => "x" }))
+      expect(recipe).not_to be_valid
+      expect(recipe.errors[:parts]).to be_present
+    end
+
+    it "is invalid when a part is missing a name" do
+      recipe = Recipe.new(valid_attrs.merge(parts: [
+        { "ingredients" => [], "instructions" => [] },
+      ]))
+      expect(recipe).not_to be_valid
+      expect(recipe.errors[:parts].join).to include("name")
+    end
+
+    it "is invalid when a part's ingredients is not an array" do
+      recipe = Recipe.new(valid_attrs.merge(parts: [
+        { "name" => "rub", "ingredients" => "salt", "instructions" => [] },
+      ]))
+      expect(recipe).not_to be_valid
+      expect(recipe.errors[:parts].join).to include("ingredients")
+    end
+  end
 end
