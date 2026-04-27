@@ -4,6 +4,7 @@ class Recipe < ApplicationRecord
 
   validates :title, presence: true
   validate  :ingredients_and_instructions_shape
+  validate  :parts_shape
 
   scope :search, ->(query) {
     next all if query.blank?
@@ -33,5 +34,19 @@ class Recipe < ApplicationRecord
   def ingredients_and_instructions_shape
     errors.add(:ingredients, "must be an array") unless ingredients.is_a?(Array)
     errors.add(:instructions, "must be an array") unless instructions.is_a?(Array)
+  end
+
+  def parts_shape
+    return errors.add(:parts, "must be an array") unless parts.is_a?(Array)
+
+    parts.each_with_index do |part, i|
+      unless part.is_a?(Hash)
+        errors.add(:parts, "[#{i}] must be an object")
+        next
+      end
+      errors.add(:parts, "[#{i}] name must be a string")        unless part["name"].is_a?(String)
+      errors.add(:parts, "[#{i}] ingredients must be an array") unless part["ingredients"].is_a?(Array)
+      errors.add(:parts, "[#{i}] instructions must be an array") unless part["instructions"].is_a?(Array)
+    end
   end
 end

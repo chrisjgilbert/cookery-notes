@@ -46,6 +46,43 @@ class RecipeExtractor
             },
             required: ["step", "text"]
           }
+        },
+        parts: {
+          type: "array",
+          description: "Optional. Use only when the source clearly groups ingredients " \
+                       "and/or instructions into named sections (e.g. \"For the rub\", " \
+                       "\"For the sauce\"). Leave empty otherwise.",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "Section heading, e.g. \"For the rub\"." },
+              ingredients: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    quantity: { type: ["string", "null"] },
+                    unit: { type: ["string", "null"] },
+                    name: { type: "string" },
+                    notes: { type: ["string", "null"] }
+                  },
+                  required: ["name"]
+                }
+              },
+              instructions: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    step: { type: "integer" },
+                    text: { type: "string" }
+                  },
+                  required: ["step", "text"]
+                }
+              }
+            },
+            required: ["name", "ingredients", "instructions"]
+          }
         }
       },
       required: ["is_recipe", "title", "ingredients", "instructions", "tags"]
@@ -58,6 +95,18 @@ class RecipeExtractor
     wording in ingredient names and instruction text; normalize quantities but do not
     invent information. Set is_recipe=false only if the page clearly is not a recipe.
     Always return at least one ingredient and one instruction for real recipes.
+
+    If the source organises its ingredients and/or instructions into clearly named
+    sections (e.g. "For the rub", "For the sauce", "For the meat"), also populate
+    `parts`, one entry per section, with that section's ingredients and instructions.
+    Use the source's own section names. If a section only lists ingredients (no method
+    of its own), still include it as a part with an empty `instructions` array, and
+    vice versa. Number `step` from 1 within each part.
+
+    Always also populate the top-level `ingredients` and `instructions` arrays. When
+    you produce `parts`, the top-level arrays should be the flattened concatenation
+    of every part, with `step` renumbered sequentially across the whole recipe. Leave
+    `parts` empty when the source does not group its content into sections.
   PROMPT
 
   def self.call(markdown, source_url: nil)
@@ -129,8 +178,18 @@ class RecipeExtractor
       "source_site" => (URI(source_url).host rescue nil),
       "tags" => Array(data["tags"]),
       "ingredients" => Array(data["ingredients"]),
-      "instructions" => Array(data["instructions"])
+      "instructions" => Array(data["instructions"]),
+      "parts" => Array(data["parts"]).map { |p| normalize_part(p) }
     )
+  end
+
+  def normalize_part(part)
+    part = part.is_a?(Hash) ? part.transform_keys(&:to_s) : {}
+    {
+      "name" => part["name"].to_s,
+      "ingredients" => Array(part["ingredients"]),
+      "instructions" => Array(part["instructions"]),
+    }
   end
 
   def client

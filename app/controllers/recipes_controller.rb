@@ -81,6 +81,7 @@ class RecipesController < ApplicationController
       tags: [],
       ingredients: [:quantity, :unit, :name, :notes],
       instructions: [:step, :text],
+      parts: [:name, ingredients: [:quantity, :unit, :name, :notes], instructions: [:step, :text]],
     )
   end
 end

@@ -52,6 +52,59 @@ RSpec.describe RecipeExtractor do
     expect(result["ingredients"].first["name"]).to eq("noodles")
   end
 
+  it "passes through parts when the model returns them" do
+    stub_request(:post, "https://api.anthropic.com/v1/messages")
+      .to_return(
+        status: 200,
+        body: tool_response({
+          "is_recipe" => true,
+          "title" => "Pork Shoulder",
+          "tags" => [],
+          "ingredients" => [{ "name" => "pork shoulder" }, { "name" => "paprika" }],
+          "instructions" => [{ "step" => 1, "text" => "Rub" }, { "step" => 2, "text" => "Smoke" }],
+          "parts" => [
+            {
+              "name" => "For the rub",
+              "ingredients" => [{ "name" => "paprika" }],
+              "instructions" => [{ "step" => 1, "text" => "Mix the rub" }],
+            },
+            {
+              "name" => "For the meat",
+              "ingredients" => [{ "name" => "pork shoulder" }],
+              "instructions" => [{ "step" => 1, "text" => "Smoke low and slow" }],
+            },
+          ],
+        }).to_json,
+        headers: { "Content-Type" => "application/json" },
+      )
+
+    result = described_class.call("# markdown", source_url: "https://example.com/pork")
+
+    expect(result["parts"].length).to eq(2)
+    expect(result["parts"].first).to include("name" => "For the rub")
+    expect(result["parts"].first["ingredients"].first["name"]).to eq("paprika")
+    expect(result["parts"].last["instructions"].first["text"]).to eq("Smoke low and slow")
+  end
+
+  it "defaults parts to an empty array when the model omits the field" do
+    stub_request(:post, "https://api.anthropic.com/v1/messages")
+      .to_return(
+        status: 200,
+        body: tool_response({
+          "is_recipe" => true,
+          "title" => "Toast",
+          "tags" => [],
+          "ingredients" => [{ "name" => "bread" }],
+          "instructions" => [{ "step" => 1, "text" => "Toast" }],
+        }).to_json,
+        headers: { "Content-Type" => "application/json" },
+      )
+
+    result = described_class.call("# markdown", source_url: "https://example.com/toast")
+
+    expect(result["parts"]).to eq([])
+  end
+
   it "raises NotRecipeError when the model says is_recipe: false" do
     stub_request(:post, "https://api.anthropic.com/v1/messages").to_return(
       status: 200,

@@ -98,7 +98,8 @@ CREATE TABLE public.recipes (
     notes text,
     search_tsv tsvector,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    parts jsonb DEFAULT '[]'::jsonb NOT NULL
 );
 
 
@@ -191,5 +192,6 @@ CREATE TRIGGER recipes_tsv_trg BEFORE INSERT OR UPDATE ON public.recipes FOR EAC
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260426153224'),
 ('20260423062338');
 

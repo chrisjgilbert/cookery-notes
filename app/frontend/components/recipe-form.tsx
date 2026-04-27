@@ -1,5 +1,5 @@
 import { Plus, Trash2 } from "lucide-react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, type Control, type UseFormRegister } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ const EMPTY: RecipeInput = {
   servings: null,
   ingredients: [],
   instructions: [],
+  parts: [],
   tags: [],
   cuisine: null,
   course: null,
@@ -41,6 +42,7 @@ export function RecipeForm({ defaultValues, submitLabel, onSubmit, submitting }:
 
   const ingredients = useFieldArray({ control, name: "ingredients" });
   const instructions = useFieldArray({ control, name: "instructions" });
+  const parts = useFieldArray({ control, name: "parts" });
 
   const submit = handleSubmit(async (values) => {
     const tags = typeof (values as unknown as { tags: unknown }).tags === "string"
@@ -212,6 +214,40 @@ export function RecipeForm({ defaultValues, submitLabel, onSubmit, submitting }:
         </div>
       </section>
 
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold">Parts</h3>
+            <p className="text-xs text-muted-foreground">
+              Optional. Group ingredients and instructions into named sections like
+              &ldquo;For the rub&rdquo; or &ldquo;For the sauce&rdquo;. When parts are
+              present, they replace the flat lists above on the recipe page.
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() =>
+              parts.append({ name: "", ingredients: [], instructions: [] })
+            }
+          >
+            <Plus className="h-4 w-4" /> Add part
+          </Button>
+        </div>
+        <div className="space-y-6">
+          {parts.fields.map((field, i) => (
+            <PartFields
+              key={field.id}
+              index={i}
+              control={control}
+              register={register}
+              onRemove={() => parts.remove(i)}
+            />
+          ))}
+        </div>
+      </section>
+
       <Field label="Notes" htmlFor="notes">
         <Textarea id="notes" rows={3} {...register("notes")} />
       </Field>
@@ -243,6 +279,154 @@ function Field({
         {required && <span className="text-primary"> *</span>}
       </Label>
       {children}
+    </div>
+  );
+}
+
+function PartFields({
+  index,
+  control,
+  register,
+  onRemove,
+}: {
+  index: number;
+  control: Control<RecipeInput>;
+  register: UseFormRegister<RecipeInput>;
+  onRemove: () => void;
+}) {
+  const ingredients = useFieldArray({
+    control,
+    name: `parts.${index}.ingredients` as const,
+  });
+  const instructions = useFieldArray({
+    control,
+    name: `parts.${index}.instructions` as const,
+  });
+
+  return (
+    <div className="rounded-md border border-border p-4 space-y-4">
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <Label htmlFor={`parts.${index}.name`}>
+            Part name <span className="text-primary">*</span>
+          </Label>
+          <Input
+            id={`parts.${index}.name`}
+            placeholder="e.g. For the rub"
+            {...register(`parts.${index}.name` as const, { required: true })}
+          />
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onRemove}
+          aria-label="Remove part"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <h4 className="text-sm font-medium">Ingredients</h4>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() =>
+              ingredients.append({ quantity: null, unit: null, name: "", notes: null })
+            }
+          >
+            <Plus className="h-4 w-4" /> Add
+          </Button>
+        </div>
+        <div className="space-y-2">
+          {ingredients.fields.map((field, i) => (
+            <div key={field.id} className="grid grid-cols-12 gap-2">
+              <Input
+                placeholder="Qty"
+                {...register(`parts.${index}.ingredients.${i}.quantity` as const)}
+                className="col-span-2"
+              />
+              <Input
+                placeholder="Unit"
+                {...register(`parts.${index}.ingredients.${i}.unit` as const)}
+                className="col-span-2"
+              />
+              <Input
+                placeholder="Name"
+                {...register(`parts.${index}.ingredients.${i}.name` as const, {
+                  required: true,
+                })}
+                className="col-span-4"
+              />
+              <Input
+                placeholder="Notes"
+                {...register(`parts.${index}.ingredients.${i}.notes` as const)}
+                className="col-span-3"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => ingredients.remove(i)}
+                aria-label="Remove ingredient"
+                className="col-span-1"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <h4 className="text-sm font-medium">Instructions</h4>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() =>
+              instructions.append({ step: instructions.fields.length + 1, text: "" })
+            }
+          >
+            <Plus className="h-4 w-4" /> Add
+          </Button>
+        </div>
+        <div className="space-y-2">
+          {instructions.fields.map((field, i) => (
+            <div key={field.id} className="grid grid-cols-12 gap-2">
+              <Input
+                type="number"
+                {...register(`parts.${index}.instructions.${i}.step` as const, {
+                  valueAsNumber: true,
+                  required: true,
+                })}
+                className="col-span-1"
+              />
+              <Textarea
+                rows={2}
+                {...register(`parts.${index}.instructions.${i}.text` as const, {
+                  required: true,
+                })}
+                className="col-span-10"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => instructions.remove(i)}
+                aria-label="Remove step"
+                className="col-span-1"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
