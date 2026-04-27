@@ -50,8 +50,9 @@ BEGIN
     setweight(to_tsvector('english', coalesce(NEW.description,'')), 'B') ||
     setweight(to_tsvector('english',
       coalesce((
-        SELECT string_agg(value->>'name', ' ')
-        FROM jsonb_array_elements(NEW.ingredients)
+        SELECT string_agg(ing->>'name', ' ')
+        FROM jsonb_array_elements(NEW.parts) part,
+             jsonb_array_elements(part->'ingredients') ing
       ), '')
     ), 'C');
   RETURN NEW;
@@ -89,8 +90,7 @@ CREATE TABLE public.recipes (
     cook_time_minutes integer,
     total_time_minutes integer,
     servings integer,
-    ingredients jsonb DEFAULT '[]'::jsonb NOT NULL,
-    instructions jsonb DEFAULT '[]'::jsonb NOT NULL,
+    parts jsonb DEFAULT '[]'::jsonb NOT NULL,
     tags text[] DEFAULT '{}'::text[] NOT NULL,
     cuisine character varying,
     course character varying,
@@ -98,8 +98,7 @@ CREATE TABLE public.recipes (
     notes text,
     search_tsv tsvector,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    parts jsonb DEFAULT '[]'::jsonb NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -192,6 +191,5 @@ CREATE TRIGGER recipes_tsv_trg BEFORE INSERT OR UPDATE ON public.recipes FOR EAC
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20260426153224'),
 ('20260423062338');
 

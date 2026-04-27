@@ -4,8 +4,13 @@ RSpec.describe Recipe, type: :model do
   let(:valid_attrs) do
     {
       title: "Tomato Pasta",
-      ingredients: [{ "name" => "pasta" }, { "name" => "tomato" }],
-      instructions: [{ "step" => 1, "text" => "Boil" }],
+      parts: [
+        {
+          "name" => "",
+          "ingredients" => [{ "name" => "pasta" }, { "name" => "tomato" }],
+          "instructions" => [{ "step" => 1, "text" => "Boil" }],
+        },
+      ],
       tags: ["italian"],
     }
   end
@@ -18,18 +23,47 @@ RSpec.describe Recipe, type: :model do
     expect(Recipe.new(valid_attrs.merge(title: nil))).not_to be_valid
   end
 
-  it "populates search_tsv via trigger including ingredient names" do
+  it "populates search_tsv via trigger including ingredient names from parts" do
     recipe = Recipe.create!(valid_attrs)
     recipe.reload
     rows = Recipe.where("search_tsv @@ websearch_to_tsquery('english', 'tomato')")
     expect(rows).to include(recipe)
   end
 
+  it "indexes ingredient names across multiple named parts" do
+    recipe = Recipe.create!(
+      title: "Pork Shoulder",
+      parts: [
+        {
+          "name" => "For the rub",
+          "ingredients" => [{ "name" => "paprika" }],
+          "instructions" => [{ "step" => 1, "text" => "Mix" }],
+        },
+        {
+          "name" => "For the meat",
+          "ingredients" => [{ "name" => "pork shoulder" }],
+          "instructions" => [{ "step" => 1, "text" => "Smoke" }],
+        },
+      ],
+    )
+    rows = Recipe.where("search_tsv @@ websearch_to_tsquery('english', 'paprika')")
+    expect(rows).to include(recipe)
+  end
+
   describe "scopes" do
     before do
       @pasta = Recipe.create!(valid_attrs)
-      @curry = Recipe.create!(valid_attrs.merge(title: "Curry", cuisine: "Indian",
-        ingredients: [{ "name" => "chicken" }]))
+      @curry = Recipe.create!(valid_attrs.merge(
+        title: "Curry",
+        cuisine: "Indian",
+        parts: [
+          {
+            "name" => "",
+            "ingredients" => [{ "name" => "chicken" }],
+            "instructions" => [{ "step" => 1, "text" => "Cook" }],
+          },
+        ],
+      ))
     end
 
     it ".with_cuisine filters by cuisine" do
@@ -48,21 +82,10 @@ RSpec.describe Recipe, type: :model do
     end
   end
 
-  describe "parts" do
+  describe "parts validation" do
     it "defaults to an empty array" do
-      recipe = Recipe.create!(valid_attrs)
+      recipe = Recipe.create!(title: "Empty", tags: [])
       expect(recipe.parts).to eq([])
-    end
-
-    it "is valid with well-formed parts" do
-      recipe = Recipe.new(valid_attrs.merge(parts: [
-        {
-          "name" => "For the rub",
-          "ingredients" => [{ "name" => "paprika" }],
-          "instructions" => [{ "step" => 1, "text" => "Mix" }],
-        },
-      ]))
-      expect(recipe).to be_valid
     end
 
     it "is invalid when parts is not an array" do

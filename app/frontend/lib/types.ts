@@ -27,8 +27,6 @@ export interface Recipe {
   cook_time_minutes: number | null;
   total_time_minutes: number | null;
   servings: number | null;
-  ingredients: Ingredient[];
-  instructions: InstructionStep[];
   parts: RecipePart[];
   tags: string[];
   cuisine: string | null;

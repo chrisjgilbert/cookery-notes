@@ -3,7 +3,6 @@ class Recipe < ApplicationRecord
   SORT_ORDERS  = %w[asc desc].freeze
 
   validates :title, presence: true
-  validate  :ingredients_and_instructions_shape
   validate  :parts_shape
 
   scope :search, ->(query) {
@@ -30,11 +29,6 @@ class Recipe < ApplicationRecord
   end
 
   private
-
-  def ingredients_and_instructions_shape
-    errors.add(:ingredients, "must be an array") unless ingredients.is_a?(Array)
-    errors.add(:instructions, "must be an array") unless instructions.is_a?(Array)
-  end
 
   def parts_shape
     return errors.add(:parts, "must be an array") unless parts.is_a?(Array)

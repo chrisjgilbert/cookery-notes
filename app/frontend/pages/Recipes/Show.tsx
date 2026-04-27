@@ -19,8 +19,6 @@ import type { Ingredient, InstructionStep, Recipe } from "@/lib/types";
 import { formatMinutes } from "@/lib/utils";
 
 export default function RecipesShow({ recipe }: { recipe: Recipe }) {
-  const hasParts = (recipe.parts ?? []).length > 0;
-
   function onDelete() {
     router.delete(`/recipes/${recipe.id}`);
   }
@@ -123,27 +121,19 @@ export default function RecipesShow({ recipe }: { recipe: Recipe }) {
           </a>
         )}
 
-        {hasParts ? (
-          <div className="space-y-8">
-            {recipe.parts.map((part, idx) => (
-              <div
-                key={idx}
-                className="grid gap-8 lg:grid-cols-[1fr_1.5fr]"
-              >
+        <div className="space-y-8">
+          {recipe.parts.map((part, idx) => (
+            <div key={idx} className="grid gap-8 lg:grid-cols-[1fr_1.5fr]">
+              {part.name && (
                 <section className="lg:col-span-2">
                   <h2 className="text-xl font-semibold">{part.name}</h2>
                 </section>
-                <IngredientsList items={part.ingredients} />
-                <InstructionsList items={part.instructions} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-8 lg:grid-cols-[1fr_1.5fr]">
-            <IngredientsList items={recipe.ingredients} />
-            <InstructionsList items={recipe.instructions} />
-          </div>
-        )}
+              )}
+              <IngredientsList items={part.ingredients} />
+              <InstructionsList items={part.instructions} />
+            </div>
+          ))}
+        </div>
 
         {recipe.notes && (
           <section className="mt-8">
