@@ -9,7 +9,7 @@ gem "bcrypt", "~> 3.1.7"
 gem "inertia_rails", "~> 3.6"
 gem "vite_rails", "~> 3.0"
 
-gem "faraday", "~> 2.10"
+gem "faraday", "~> 2.14"
 gem "ruby-anthropic", "~> 0.3"
 
 gem "tzinfo-data", platforms: %i[windows jruby]
