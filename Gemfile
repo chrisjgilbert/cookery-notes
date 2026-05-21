@@ -6,7 +6,7 @@ gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
 
 gem "bcrypt", "~> 3.1.7"
-gem "inertia_rails", "~> 3.6"
+gem "inertia_rails", "~> 3.21"
 gem "vite_rails", "~> 3.0"
 
 gem "faraday", "~> 2.10"
